@@ -1,5 +1,4 @@
 <footer>
-
 <div class="contact">
             <h3>Contact</h3>
             <span>Téléphone</span>

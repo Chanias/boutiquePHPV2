@@ -3,25 +3,38 @@
 
 <body>
 <?php
+session_start();
     include('header.php');
-    ?>
-     <?php
-              include ('functions.php');
-                ?>
+    include ('functions.php');
+    if (!isset($_SESSION['panier'])){
+        $_SESSION['panier']=[];
+        // ou  $_SESSION['panier']=array();
+        //pour créer un panier vide
+        //! l'inverse d'une variable donc si il n'existe pas je créer
+    }
+?> 
+
      <main>
-        <div class="container-fluid">
+     <div class="container-fluid pb-3">
             <div class="row text-center">
-                <img id="./ressources/pc-gamer" src="" style="">
+                <div class="image" id="image_et_titre">
+                <h1>Les PC GAMERS</h1>
             </div>
-        </div>
-
-        <div class="container">
-            <div class="row text-center justify-content-center">
-               
-            </div>
-        </div>
-
+        </div> 
+       
+       
+       <!--LES ARTICLES DANS DES CARDS-->
+  <section id="cards">
+<h2>Nos produits</h2>
+  <div class="row">
+    <?php
+show_articles();
+    ?>
+  
+</div>
+</section>
     </main>
+
     <?php
     include('footer.php');
     ?>
