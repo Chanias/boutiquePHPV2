@@ -60,7 +60,7 @@ function show_articles()
   <div class="card-body">
     <h5 class="card-title">' . $article['nom'] . '</h5>
     <p class="card-text">' . $article['description'] . '</p>
-    <p class="card-text">' . $article['prix'] . ' €</p>
+    <p class="card-text">' . number_format($article['prix'],2,',',' ') . ' €</p>
     
     <form action="produit.php" method="post">
         <input type="hidden" name="articleId" value="'. $article['id'] .'" ">
