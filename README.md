@@ -1,2 +1,2 @@
-# boutique php V1 sans bdd
+# boutique php V2 avec bdd
 
