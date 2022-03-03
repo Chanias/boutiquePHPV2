@@ -1,2 +1,2 @@
-# site_vitrine
+# boutique php V1 sans bdd
 
