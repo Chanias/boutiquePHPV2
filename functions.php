@@ -90,10 +90,10 @@ function showArticlesDetails($article){
     
     echo '<div class="container p-2">
     <div class="row justify-content-center">
-    <img src="./ressources/' . $article['image'] . '" class="w-50" alt="...">
+    <img src="./ressources/' . $article['image'] . '" class="w-25" alt="...">
     </div>
   </div>
-
+<br>
   <div class="container w-50 border border-dark bg-light mb-4">
     <div class="row pt-5 text-center font-weight-bold align-items-center bg-light p-3 justify-content-center">
     <h3 class="">' . $article['nom'] . '</h3>
