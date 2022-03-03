@@ -1,23 +1,25 @@
 <?php
 // Déclaration du tableau d'articles et le retourne
 
-function getArticles(){
-    $articles=
-    [
-[
-    "id"=>1,
-    "nom"=>"PC gamer razor",
-    "description"=>"un pc qui permet de jouer à des jeux plutôt récents... pour les budgets moyens",
-    "description_detaille"=>"
+function getArticles()
+{
+    $articles =
+        [
+            [
+                "id" => 1,
+                "nom" => "PC gamer razor",
+                "description" => "un pc qui permet de jouer à des jeux plutôt récents... pour les budgets moyens",
+                "description_detaille" => "
         Une carte graphique dédiée est indispensable pour faire du traitement photo ou vidéo, ainsi que pour jouer à des jeux vidéos exigeants en terme de ressources.
         ",
-    "prix"=>1499.99,
-    "image"=>"razor.jpeg"],
-[
-    "id"=>2,
-    "nom"=>"PC-gamer SKILLKORP",
-    "description"=>"Le + : Performance et design à prix contenu, un pc gamers pour les petits budgets",
-    "description_detaille"=>"Les points clés
+                "prix" => 1499.99,
+                "image" => "razor.jpeg"
+            ],
+            [
+                "id" => 2,
+                "nom" => "PC-gamer SKILLKORP",
+                "description" => "Le + : Performance et design à prix contenu, un pc gamers pour les petits budgets",
+                "description_detaille" => "Les points clés
         Processeur : AMD Ryzen 5 3600X
         Carte graphique : Nvidia GeForce GTX 1650 4Go
         Mémoire vive : 8 Go
@@ -28,22 +30,24 @@ function getArticles(){
         Type de mémoire : GDDR6
         Compatible réalité virtuelle : Oui
         Mémoire : 4 Go",
-    "prix"=>899.99,
-    "image"=>"SKILLCORP.jpg"],
+                "prix" => 899.99,
+                "image" => "SKILLCORP.jpg"
+            ],
 
-[
-    "id"=>3,
-    "nom"=>"PC-gamer INQUISITOR",
-    "description"=>"Avec l’inquisitor, vous aurez ici de quoi combattre toutes les situations possibles, qui va vous permettre le gaming le plus acharné qui soit.",
-    "description_detaillee"=>"Processeur AMD Ryzen 9 5950xMémoire 32Go DDR4 BallistixCarte graphique RTX 3090Disque SSD 2To NVMe Gen 4Watercooling 360mm RGBWifi intégréWindows
+            [
+                "id" => 3,
+                "nom" => "PC-gamer INQUISITOR",
+                "description" => "Avec l’inquisitor, vous aurez ici de quoi combattre toutes les situations possibles, qui va vous permettre le gaming le plus acharné qui soit.",
+                "description_detaillee" => "Processeur AMD Ryzen 9 5950xMémoire 32Go DDR4 BallistixCarte graphique RTX 3090Disque SSD 2To NVMe Gen 4Watercooling 360mm RGBWifi intégréWindows
     Caractéristiques
         Boîtier PC Asus ROG Strix Helios GX601 Window - MT/E-ATX
         Processeur AMD Ryzen 9 5950X Tray
         Carte mère Gigabyte X570 AORUS PRO - X570/AM4/ATX
         Mémoire PC Ballistix BL2K16G32C16U4BL RGB (2x16Go DDR4 3200 PC25600)",
-    "prix"=>5199.99,
-    "image"=>"INQUISITOR.jpg"]
-];
+                "prix" => 5199.99,
+                "image" => "INQUISITOR.jpg"
+            ]
+        ];
     return $articles;
 }
 
@@ -54,20 +58,20 @@ function show_articles()
     $articles = getArticles();
 
     foreach ($articles as $article) {
-// il faut créer comme un formulaire pour le "bouton détails"
+        // il faut créer comme un formulaire pour le "bouton détails"
         echo '<div class="card mx-auto col-md-4 mb-5" style="width: 20rem;">
   <img src="./ressources/' . $article['image'] . '" class="card-img-top" alt="...">
   <div class="card-body">
     <h5 class="card-title">' . $article['nom'] . '</h5>
     <p class="card-text">' . $article['description'] . '</p>
-    <p class="card-text">' . number_format($article['prix'],2,',',' ') . ' €</p>
+    <p class="card-text">' . number_format($article['prix'], 2, ',', ' ') . ' €</p>
     
     <form action="produit.php" method="post">
-        <input type="hidden" name="articleId" value="'. $article['id'] .'" ">
+        <input type="hidden" name="articleId" value="' . $article['id'] . '" ">
         <input class="btn btn-light" type="submit" value="Détails du produit">
     </form>
     <form action="panier.php" method="post">
-        <input type="hidden" name="articleId" value="'. $article['id'] .'" ">
+        <input type="hidden" name="articleId" value="' . $article['id'] . '" ">
         <input class="btn btn-light" type="submit" value="Ajouter au panier">
     </form>
     
@@ -85,9 +89,11 @@ function getArticleFromId($id)
             return $article;
         }
     }
-};
-function showArticlesDetails($article){
-    
+}
+
+function showArticlesDetails($article)
+{
+
     echo '<div class="container p-2">
     <div class="row justify-content-center">
     <img src="./ressources/' . $article['image'] . '" class="w-25" alt="...">
@@ -112,8 +118,9 @@ function showArticlesDetails($article){
 }
 
 //AFFICHAGE DU PANIER 
-function afficherPanier($pageName){
-    foreach ($_SESSION['panier'] as $article){
+function afficherPanier($pageName)
+{
+    foreach ($_SESSION['panier'] as $article) {
         echo '<div class="container">
 <div class="row mt-4 mb-4 text-white ">
 <div class="col-2 mx-auto text-center">Image
@@ -151,9 +158,10 @@ function afficherPanier($pageName){
     }
 }
 
-       
+
 // AJOUT D'UN ARTICLE DANS LE PANIER
-function ajoutArticle($article){
+function ajoutArticle($article)
+{
     for ($i = 0; $i < count($_SESSION['panier']); $i++) {
 
         if ($_SESSION['panier'][$i]['id'] == $article['id']) {
@@ -161,21 +169,23 @@ function ajoutArticle($article){
             return;
         }
     }
-    $article['quantite']=1;
-array_push($_SESSION['panier'], $article);
+    $article['quantite'] = 1;
+    array_push($_SESSION['panier'], $article);
 }
+
 //SUPPRIMER UN ARTCILE DANS LE PANIER
-function supprimerArticle($id){
-    for ($i = 0; $i < count($_SESSION['panier']); $i++){
-         if($_SESSION['panier'][$i]["id"] == $id){
-           array_splice($_SESSION["panier"], $i,1);
-           echo "<script> alert('Votre article vient d'être supprimer!');</script>";
-           return;
-         }
+function supprimerArticle($id)
+{
+    for ($i = 0; $i < count($_SESSION['panier']); $i++) {
+        if ($_SESSION['panier'][$i]["id"] == $id) {
+            array_splice($_SESSION["panier"], $i, 1);
+            echo "<script> alert('Votre article vient d'être supprimer!');</script>";
+            return;
+        }
     }
 }
 
-// MODIFIER LE PANIER
+// MODIFIER LES QUANTITES DANS LE PANIER
 function modifQuantite($quantite, $id_produit)
 { //boucler sur le panier, 
 
@@ -209,7 +219,7 @@ function viderPanier()
     $_SESSION["panier"] = [];
     echo '<script> alert("panier totalement vide !")</script>';
 }
-    
+
 // FRAIS DE PORT
 function fraisDePort()
 {
@@ -219,13 +229,18 @@ function fraisDePort()
     }
     return $quantite * 5;
 }
-function afficherFraisDePort(){
+
+function afficherFraisDePort()
+{
     echo 'Frais de Port = ' . number_format(fraisDePort(), 2, " , ", " ") . '€';
 }
-function TotalApresFdP(){
+
+function TotalApresFdP()
+{
     return montantPanier() + fraisDePort();
-    
 }
-function afficherTotalApresFdp(){
+
+function afficherTotalApresFdp()
+{
     echo 'Votre total de commande est  ' . number_format(TotalApresFdP(), 2, " , ", " ") . '€';
 }
