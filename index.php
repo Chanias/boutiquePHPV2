@@ -6,6 +6,7 @@
 session_start();
     include('header.php');
     include ('functions.php');
+    include('connexion.php');
     if (!isset($_SESSION['panier'])){
         $_SESSION['panier']=[];
         // ou  $_SESSION['panier']=array();
