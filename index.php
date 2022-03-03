@@ -24,7 +24,7 @@ session_start();
                 <h1>Les PC GAMERS</h1>
             </div>
         </div> 
-       <h2>BLAJDKSKKQJFIZHDJQMDJQLKJZEJF</h2>
+       
        
        <!--LES ARTICLES DANS DES CARDS-->
   <section id="cards">
