@@ -33,7 +33,7 @@ if (isset($_POST['quantite'])){
         viderPanier($_POST['vider_panier']);
         }
      ?>
-      <div class="row justify-content-center text-dark font-weight-bold bg-light p-4">
+      <div class="row justify-content-center text-dark font-weight-bold bg-dark p-4">
                 <?php
                    afficherPanier("panier.php"); 
                 ?>

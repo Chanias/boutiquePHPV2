@@ -6,7 +6,6 @@
 session_start();
     include('header.php');
     include ('functions.php');
-    include('connexion.php');
     if (!isset($_SESSION['panier'])){
         $_SESSION['panier']=[];
         // ou  $_SESSION['panier']=array();
@@ -15,6 +14,9 @@ session_start();
     }
     if (isset($_POST['commande-valide'])){
       viderPanier();
+    }
+    if (isset($_POST['validate'])) {
+        inscription();
     }
 ?> 
 
@@ -32,11 +34,13 @@ session_start();
 <h2>Nos produits</h2>
   <div class="row">
     <?php
-show_articles();
+    $articles = getArticles();
+show_articles($articles);
     ?>
   
 </div>
 </section>
+
     </main>
 
     <?php

@@ -4,7 +4,7 @@ h2{
 h2::after{
     display: block;
     height: 2px;
-    background-color: green;
+    background-color: #003e52;
     width: 100px;
     content: '';
     margin: 0 auto;
@@ -26,9 +26,7 @@ h2::after{
     height: 10rem;
     padding: 1em;
 }
-.container{
-    background-color: #003e52;
-}
+
 footer {
     background-color: #003e52;
     color: white;
@@ -37,3 +35,16 @@ footer {
     align-items: center;
     justify-content: center;
   }
+
+  /*CONNEXION*/
+#connexion{
+    background-color: wheat;
+    padding-bottom: 0.5em;
+    margin-bottom: 1em;
+}
+ /*INSCRIPTION*/
+ #inscription{
+    background-color: wheat;
+    padding-bottom: 0.5em;
+    margin-bottom: 1em;
+}
