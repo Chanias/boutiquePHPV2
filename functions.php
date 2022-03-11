@@ -266,25 +266,24 @@ function inscription()
 
         // //la vérification des champs
         if (checkInputLength()) {
+
             //     // vérification mot de passe valide 
             if (checkIfUserAlreadyExist($user_email) == false) {
 
-              if (checkPassword($user_password)) {
+                if (checkPassword($user_password)) {
 
                     $insertUserOnWebsite = $db->prepare("INSERT INTO `clients`(`nom`, `prenom`, `email`, `password`) VALUES (?,?,?,?)");
                     $insertUserOnWebsite->execute(array($user_nom, $user_prenom, $user_email, $user_password));
+
+                    $id = $db->lastInsertId();
+
+                    $saveUserOnWebsite = $db->prepare("INSERT INTO `adresses` (`id_client`, `adresse`, `cp`, `ville`) VALUES(?,?,?,?)");
+                    $saveUserOnWebsite->execute(array($id, $user_adresse, $user_cp, $user_ville));
                     echo "<script>alert('Inscription réussie...')</script>";
-
-                    $saveUserOnWebsite = $db->prepare("INSERT INTO `adresses`(`adresse`, `cp`, `ville`) VALUES (?,?,?)");
-                    $saveUserOnWebsite->execute(array($user_adresse, $user_cp, $user_ville));
-                } 
-
-                else {
-                    echo "<script>alert('Sécurité du mot de passe insuffisant')";
-                    var_dump('test');
+                } else {
+                    echo "<script>alert('Sécurité du mot de passe insuffisant')</script>";
                 }
-            } 
-            else {
+            } else {
                 echo "<script>alert('L\'utilisateur existe déjà sur le site...')</script>";
             }
         } else {
@@ -337,11 +336,13 @@ function checkIfUserAlreadyExist($user_email)
         return true; //on ne peut pas l'inscrire car il existe déjà
     }
 }
-function checkPassword($user_password){
-    $regex = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[@$!%*?/&])(?=\S+$).{8,15}$^";
-    if (preg_match($regex, $user_password)){
+function checkPassword($user_password)
+{
+    $regex = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[@$!%*?/&]).{8,15}$^";
+
+    if (preg_match($regex, $user_password)) {
         return true;
-    }else{
+    } else {
         return false;
     }
 }
