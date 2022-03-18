@@ -4,8 +4,9 @@
 <body>
 <?php
 session_start();
-    include('header.php');
+    
     include ('functions.php');
+   
     if (!isset($_SESSION['panier'])){
         $_SESSION['panier']=[];
         // ou  $_SESSION['panier']=array();
@@ -15,9 +16,16 @@ session_start();
     if (isset($_POST['commande-valide'])){
       viderPanier();
     }
-    if (isset($_POST['validate'])) {
+    if (isset($_POST['inscription'])) {
         inscription();
     }
+    if (isset($_POST['connexion'])) {
+        connexion();
+    }
+    if (isset($_POST['deconnexion'])) {
+        deconnexion();
+    }
+    include('header.php');
 ?> 
 
      <main>
@@ -37,7 +45,6 @@ session_start();
     $articles = getArticles();
 show_articles($articles);
     ?>
-  
 </div>
 </section>
 

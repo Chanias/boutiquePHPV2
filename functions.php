@@ -256,6 +256,7 @@ function inscription()
         !empty($_POST['nom']) and !empty($_POST['prenom']) and !empty($_POST['email']) and !empty($_POST['password'])
         and !empty($_POST['adresse']) and !empty($_POST['cp']) and !empty($_POST['ville'])
     ) {
+        //les données de l'utilisateur pour l'inscription
         $user_nom = htmlspecialchars($_POST['nom']);
         $user_prenom = htmlspecialchars($_POST['prenom']);
         $user_email = htmlspecialchars($_POST['email']);
@@ -271,12 +272,12 @@ function inscription()
             if (checkIfUserAlreadyExist($user_email) == false) {
 
                 if (checkPassword($user_password)) {
-
+                    //insérer l'utlisisateur dans la base de données
                     $insertUserOnWebsite = $db->prepare("INSERT INTO `clients`(`nom`, `prenom`, `email`, `password`) VALUES (?,?,?,?)");
                     $insertUserOnWebsite->execute(array($user_nom, $user_prenom, $user_email, $user_password));
 
                     $id = $db->lastInsertId();
-
+                    //sauvegarder les données dans la table adresse
                     $saveUserOnWebsite = $db->prepare("INSERT INTO `adresses` (`id_client`, `adresse`, `cp`, `ville`) VALUES(?,?,?,?)");
                     $saveUserOnWebsite->execute(array($id, $user_adresse, $user_cp, $user_ville));
                     echo "<script>alert('Inscription réussie...')</script>";
@@ -338,11 +339,183 @@ function checkIfUserAlreadyExist($user_email)
 }
 function checkPassword($user_password)
 {
-    $regex = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[@$!%*?/&]).{8,15}$^";
+    $regex = "^(?=.*[0-9])(?=.*[a-zA-Z]).{8,15}$^";
 
     if (preg_match($regex, $user_password)) {
         return true;
     } else {
         return false;
+    }
+}
+// INSCRIPTION
+
+function connexion()
+{
+    $db = getConnexion();
+    //Validation du formulaire
+
+    //Vérifier si l'utlisisateur a bien compléter tous les champs
+    if (!empty($_POST['email']) and !empty($_POST['password'])) {
+
+        //les données de l'utilisateur pour la connexion
+        $user_email = htmlspecialchars($_POST['email']);
+        $user_password = htmlspecialchars($_POST['password']);
+
+        if (checkIfUserAlreadyExist($user_email)) {
+
+            $checkIfUserAlreadyExist = $db->prepare("SELECT * FROM clients WHERE email=?");
+            $checkIfUserAlreadyExist->execute(array($user_email));
+            $userInfos = $checkIfUserAlreadyExist->fetch();
+
+            if (password_verify($user_password, $userInfos['password'])) {
+                $_SESSION['id'] = $userInfos['id'];
+                $_SESSION['nom'] = $userInfos['nom'];
+                $_SESSION['prenom'] = $userInfos['prenom'];
+                $_SESSION['email'] = $userInfos['email'];
+                $_SESSION['password'] = $userInfos['password'];
+
+                $adresse = recupAdresse();
+
+                // stockage dans la session
+                $_SESSION['adresse'] = $adresse;
+
+
+
+                echo "<script>alert('Vous êtes connecté(e)')</script>";
+            } else {
+                echo "<script>alert('Votre mot de passe est incorrect...')</script>";
+            }
+        } else {
+            echo "<script>alert('Votre email est incorrect...')</script>";
+        }
+    } else {
+        echo "<script>alert('Veuillez compléter tous les champs...')</script>";
+    }
+}
+// DECONNEXION
+function deconnexion()
+{
+    $db = getConnexion();
+    $_SESSION = array();
+    session_destroy();
+}
+
+// MON COMPTE
+//récupération du nom
+function modifInfos()
+{
+    $db = getConnexion();
+    if (empty($_POST['nom']) || empty($_POST['prenom'])) {
+        echo "<script>alert('Veuillez compléter tous les champs...')</script>";
+    } else {
+        if (strlen($_POST['nom']) < 2 || strlen($_POST['nom']) > 25) {
+            echo "Nombre de lettres pour le nom trop court";
+            return;
+        }
+
+        if (strlen($_POST['prenom']) < 3 || strlen($_POST['prenom']) > 25) {
+            echo "Nombre de lettres pour le prenom trop court";
+            return;
+        }
+
+        $nom = htmlspecialchars($_POST['nom']);
+        $prenom = htmlspecialchars($_POST['prenom']);
+
+
+        $req = $db->prepare("UPDATE `clients` SET `nom`=?,`prenom`=? WHERE id=?");
+        $req->execute(array($nom, $prenom, $_SESSION['id']));
+
+        $_SESSION['nom'] = $nom;
+        $_SESSION['prenom'] = $prenom;
+
+
+        echo "<script>alert('Modification des infos réussie...')</script>";
+    }
+}
+
+function modifAdresse()
+{
+    $db = getConnexion();
+    if (empty($_POST['adresse']) || empty($_POST['cp']) || empty($_POST['ville'])) {
+        echo "<script>alert('Veuillez compléter tous les champs...')</script>";
+    } else {
+        if (strlen($_POST['adresse']) < 8 || strlen($_POST['adresse']) > 50) {
+            echo "Nombre de lettres pour l'adresse' trop court";
+            return;
+        }
+        if (strlen($_POST['cp']) !== 5) {
+            echo "Nombre de lettres pour le code postal trop court";
+            return;
+        }
+        if (strlen($_POST['ville']) < 3 || strlen($_POST['ville']) > 25) {
+            echo "Nombre de lettres pour la ville trop court";
+            return;
+        }
+
+        $adresse = htmlspecialchars($_POST['adresse']);
+
+        $req = $db->prepare('UPDATE `adresses` SET  `adresse`=?,`cp`=?, `ville`=? WHERE id_client = ?');
+        $req->execute(array($adresse, $_SESSION['id']));
+
+
+        $_SESSION["adresse"]["adresse"] = $_POST["adresse"];
+        $_SESSION["adresse"]["cp"] = $_POST["cp"];
+        $_SESSION["adresse"]["ville"] = $_POST["ville"];
+
+
+        echo "<script>alert('Modification des infos réussie...')</script>";
+    }
+}
+
+// récupération adresse
+function recupAdresse()
+{
+    $db = getConnexion();
+    $adresse = $db->prepare("SELECT * FROM adresses WHERE id_client= ?");
+    $adresse->execute(array($_SESSION['id']));
+    return $adresse->fetch();
+}
+
+// récupération Mot de passe
+function recupMdp()
+{
+    $db = getConnexion();
+    $query = $db->prepare('SELECT `password` FROM clients WHERE id = ?');
+    $query->execute(array($_SESSION['id']));
+    return $query->fetch();
+}
+
+// MODIFICATION MOT DE PASSE
+function modifMdp()
+{
+    $db = getConnexion();
+    //Vérifier si l'utlisisateur a bien compléter tous les champs
+    if (empty($_POST['password']) || empty($_POST['newPassword'])) {
+        echo "<script>alert('Veuillez compléter tous les champs...')</script>";
+        return false;
+    } else {
+        //on vérifie le mot de passe actuel
+        $currentPassword = recupMdp();
+        $currentPassword = $currentPassword['password'];
+
+        // si mdp saisie = mdp actuel
+        if (!password_verify($_POST['password'], $currentPassword)) {
+            echo 'Le mot de passe actuel que vous avez saisie est incorrect, veuillez réessayer';
+            return false;
+        } else {
+            //on nettoie le nouveau mot de passe
+            $newPassword = htmlspecialchars($_POST['newPassword']);
+            //on vérifie que le nouveau mot de passe est ok pour la regex
+            if (!checkPassword($newPassword)) {
+                echo "<script>alert('Votre mot de passe n'a pas les conditions requises : 1 majuscule, au moins 1 chiffre, au moins 1 caractère spécial, et limité à 15 caractères...')</script>";
+            } else {
+                $newPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+                // si mot de passe ok, on insert dans la bdd
+                $req = $db->prepare('UPDATE `clients` SET  `password`=? WHERE id= ?');
+                $req->execute(array($newPassword, $_SESSION['id']));
+                
+                echo "<script>alert('Modification des infos réussie...')</script>";
+            }
+        }
     }
 }

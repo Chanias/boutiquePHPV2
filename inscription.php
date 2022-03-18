@@ -13,9 +13,7 @@
   <?php
 if(isset($errorMsg)){
   echo '<p>'.$errorMsg.'</p>';
-  if (isset($_POST['validate'])) {
-    inscription();
-}
+  
 }
   ?>
   <div class="mb-3 mt-5">
@@ -41,14 +39,14 @@ if(isset($errorMsg)){
     <input required type="text" class="form-control" name="adresse">
   </div>
   <div class="mb-3">
-    <label for="code_postale" class="form-label">Code Postal: </label>
+    <label for="code_postal" class="form-label">Code Postal: </label>
     <input required type="text" class="form-control" name="cp">
   </div>
   <div class="mb-3">
     <label for="ville" class="form-label">Ville: </label>
     <input required type="text" class="form-control" name="ville">
   </div>
-  <input type="hidden" name="validate" value="true">
+  <input type="hidden" name="inscription" value="true">
   <button type="submit" class="btn btn-primary mb-5">Inscription</button>
 </form>
 </div>
