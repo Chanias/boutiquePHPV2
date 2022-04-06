@@ -13,8 +13,10 @@ session_start();
         //pour créer un panier vide
         //! l'inverse d'une variable donc si il n'existe pas je créer
     }
+
     if (isset($_POST['commande-valide'])){
-      viderPanier();
+        saveCommande();
+        viderPanier();
     }
     if (isset($_POST['inscription'])) {
         inscription();

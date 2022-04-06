@@ -17,9 +17,16 @@ session_start();
     }
 ?> 
 
-     <main>
+<main>
+     <div class="container-fluid pb-3">
+            <div class="row text-center">
+                <div class="image" id="image_et_titre">
+                <h1>Les PC GAMERS</h1>
+            </div>
+        </div> 
      <section id="cards">
   <div class="row">
+      <!--LES ARTICLES DANS DES CARDS PAR GAMMES-->
     <?php
 affichGammes();
     ?>
@@ -28,7 +35,7 @@ affichGammes();
 </section>
        
        
-       <!--LES ARTICLES DANS DES CARDS PAR GAMMES-->
+       
  
     </main>
 

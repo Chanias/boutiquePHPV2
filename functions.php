@@ -12,41 +12,54 @@ function getConnexion()
     return $db;
 }
 
-// Déclaration du tableau d'articles et le retourne
+// On va chercher les articles dans la base 
 function getArticles()
 {
     $db = getConnexion();
-    $query = $db->query("SELECT `id`,`image`,`nom`,`description`, `prix` FROM `articles`");
+    $query = $db->query("SELECT `id`,`image`,`nom`,`description`, `prix`, `stock` FROM `articles`");
     return $query->fetchAll();
 }
 // affichage des articles + bouton du détails produit
-
 function show_articles($articles)
 {
-
-
+//boucler sur le tableau des articles
     foreach ($articles as $article) {
         // il faut créer comme un formulaire pour le "bouton détails"
+        // faire une variable pour le style pour pouvoir faire disparaître le bouton quand plus de stock
+        $visible=$article['stock'] < 0 ?"display:none" :" display:block";
         echo '
-        
         <div class="card mx-auto col-md-4 mb-5" style="width: 22rem;">
   <img src="./ressources/' . $article['image'] . '" class="card-img-top" alt="...">
   <div class="card-body">
     <h5 class="card-title">' . $article['nom'] . '</h5>
     <p class="card-text">' . $article['description'] . '</p>
     <p class="card-text">' . number_format($article['prix'], 2, ',', ' ') . ' €</p>
+
     <div class="d-grid gap-2 ">
     <form action="produit.php" method="post">
         <input type="hidden" name="articleId" value="' . $article['id'] . '" ">
         <input class="btn btn-primary" type="submit" value="Détails du produit">
     </form>
-    <form action="panier.php" method="post">
+
+        <form action="panier.php" method="post" style=' .$visible . '>
         <input type="hidden" name="articleId" value="' . $article['id'] . '" ">
         <input class="btn btn-primary" type="submit" value="Ajouter au panier">
-    </form>
+    </form>'
+    . vueStock($article['stock']) . ' 
     </div>
   </div>
 </div>';
+    }
+}
+// CREATION DU STOCK ET AFFICHAGE
+function vueStock($stock)
+{
+    if ($stock >= 10) {
+        return '<button type="button" class="btn btn-success mx-auto">En stock</button>';
+    } else if ($stock > 1) {
+        return '<button type="button" class="btn btn-warning mx-auto">Plus que ' . $stock . '</button>';
+    } else {
+        return '<button type="button" class="btn btn-danger mx-auto">Article épuisé</button>';
     }
 }
 
@@ -144,7 +157,7 @@ function affichGammes()
 {
     $gammes = recupGammes();
     foreach ($gammes as $gamme) { //boucler sur la fonction qui appelle la gamme pour ensuite rechercher un article par gamme
-        echo '<h3>' . $gamme['nom'] . '</h3>';
+        echo '<h3 class="text-center">' . $gamme['nom'] . '</h3>';
         $articlegamme = recupArticlesGamme($gamme['id']);
         show_articles($articlegamme);
     }
@@ -265,10 +278,10 @@ function inscription()
         $user_cp = htmlspecialchars($_POST['cp']);
         $user_ville = htmlspecialchars($_POST['ville']);
 
-        // //la vérification des champs
+         //la vérification des champs
         if (checkInputLength()) {
 
-            //     // vérification mot de passe valide 
+                // vérification mot de passe valide 
             if (checkIfUserAlreadyExist($user_email) == false) {
 
                 if (checkPassword($user_password)) {
@@ -298,7 +311,7 @@ function inscription()
 
 function checkInputLength()
 {
-    $longeurChampsCorrect = true;
+    
 
     if (strlen($_POST['nom']) < 2 || strlen($_POST['nom']) > 25) {
         echo "Nombre de lettres pour le nom trop court";
@@ -326,6 +339,8 @@ function checkInputLength()
     }
     return true;
 }
+
+
 function checkIfUserAlreadyExist($user_email)
 {
     $db = getConnexion();
@@ -337,6 +352,8 @@ function checkIfUserAlreadyExist($user_email)
         return true; //on ne peut pas l'inscrire car il existe déjà
     }
 }
+
+
 function checkPassword($user_password)
 {
     $regex = "^(?=.*[0-9])(?=.*[a-zA-Z]).{8,15}$^";
@@ -347,7 +364,7 @@ function checkPassword($user_password)
         return false;
     }
 }
-// INSCRIPTION
+// CONNEXION
 
 function connexion()
 {
@@ -409,12 +426,12 @@ function modifInfos()
         echo "<script>alert('Veuillez compléter tous les champs...')</script>";
     } else {
         if (strlen($_POST['nom']) < 2 || strlen($_POST['nom']) > 25) {
-            echo "Nombre de lettres pour le nom trop court";
+            echo "Nombre de lettres incorrect";
             return;
         }
 
         if (strlen($_POST['prenom']) < 3 || strlen($_POST['prenom']) > 25) {
-            echo "Nombre de lettres pour le prenom trop court";
+            echo "Nombre de lettres incorrect";
             return;
         }
 
@@ -432,6 +449,31 @@ function modifInfos()
         echo "<script>alert('Modification des infos réussie...')</script>";
     }
 }
+// FONCTION POUR AFFICHER MODIF INFORMATION 
+function showModifInfos($pageName)
+{
+    echo '
+    <div class="container mx-auto">
+    <div class="row">
+      <form class="w-50 mx-auto" action="' . $pageName . '" method="post">
+        <div class="mb-3 mt-5">
+          <label for="nom" class="form-label">Nom: </label>
+          <input required type="text" class="form-control" name="nom" value="' . $_SESSION["nom"] . ' ">
+        </div>
+        <div class="mb-3">
+          <label for="prenom" class="form-label">Prénom: </label>
+          <input required type="text" class="form-control" name="prenom" value="' . $_SESSION["prenom"] . '">
+        </div>
+        <div class="mb-3 ">
+          <label for="Email" class="form-label">Adresse email: </label>
+          <input required type="email" class="form-control" name="email" aria-describedby="emailHelp" value="' . $_SESSION["email"] . '">
+        </div>
+  
+        <input type="hidden" name="modif_infos" value="true">
+        <button type="submit" class="btn btn-primary mb-5">Modifier</button>
+      </form>
+    </div>
+  </div>';}
 
 function modifAdresse()
 {
@@ -455,7 +497,10 @@ function modifAdresse()
         $adresse = htmlspecialchars($_POST['adresse']);
 
         $req = $db->prepare('UPDATE `adresses` SET  `adresse`=?,`cp`=?, `ville`=? WHERE id_client = ?');
-        $req->execute(array($adresse, $_SESSION['id']));
+        $req->execute(array($adresse,
+        $_POST['cp'],
+         $_POST['ville'],
+         $_SESSION['id']));
 
 
         $_SESSION["adresse"]["adresse"] = $_POST["adresse"];
@@ -466,6 +511,35 @@ function modifAdresse()
         echo "<script>alert('Modification des infos réussie...')</script>";
     }
 }
+
+//FONCTION POUR AFFICHER LA MODIF ADRESSE 
+function showModifAdresse($pageName)
+    {
+        echo '
+    <div class="container mx-auto">
+    <div class="row">
+      <form class="w-50 mx-auto" action="' . $pageName . '" method="post">
+        <div class="mb-3 mt-5">
+          <label for="adresse" class="form-label">Adresse : </label>
+          <input required type="text" class="form-control" name="adresse" value="' . $_SESSION["adresse"]["adresse"] . '">
+        </div>
+        <div class="mb-3">
+          <label for="cp" class="form-label">Code postal : </label>
+          <input required type="text" class="form-control" name="cp" value="' . $_SESSION["adresse"]["cp"] . '">
+        </div>
+        <div class="mb-3 ">
+          <label for="ville" class="form-label">Ville : </label>
+          <input required type="text" class="form-control" name="ville" value="' . $_SESSION["adresse"]["ville"] . '">
+        </div>
+  
+        <input type="hidden" name="modif_adresse" value="true">
+        <button type="submit" class="btn btn-primary mb-5">Modifier</button>
+      </form>
+  
+    </div>
+  </div>';
+    }
+
 
 // récupération adresse
 function recupAdresse()
@@ -494,7 +568,7 @@ function modifMdp()
         echo "<script>alert('Veuillez compléter tous les champs...')</script>";
         return false;
     } else {
-        //on vérifie le mot de passe actuel
+        //on récupère le mot de passe actuel
         $currentPassword = recupMdp();
         $currentPassword = $currentPassword['password'];
 
@@ -519,3 +593,168 @@ function modifMdp()
         }
     }
 }
+
+//SAUVEGARDER LA COMMANDE
+function saveCommande()
+{
+    $db = getConnexion();
+    //insérer dans la table commandes
+    $commande = $db->prepare("INSERT INTO `commandes` (`id_client`, `numero`, `date_commande`, `prix`) VALUES(:id_client, :numero, :date_commande, :prix)");
+    $commande->execute([
+        "id_client" => $_SESSION["id"],
+        "numero" => rand(1000000, 9999999),
+        "date_commande" => date("d-m-Y h:i:s"),
+        "prix" => TotalApresFdP()
+    ]);
+
+    // recupérer dernier id
+    $commande_id = $db->lastInsertId(); 
+    // insérer dans la table commande_articles
+    $query = $db->prepare("INSERT INTO `commande_articles` (`id_commande`, `id_article`, `quantite`) VALUES(:id_commande, :id_article, :quantite)");
+    // pour boucler sur le panier pour executer pour chaque article pour voir tous les articles et quantité
+    foreach ($_SESSION["panier"] as $article) {
+        $query->execute([
+            "id_commande" => $commande_id,
+            "id_article" => $article["id"],
+            "quantite" =>   $article["quantite"],
+        ]);
+
+        //baisse stock
+
+        $newStock=$article['stock']-$article["quantite"];
+        
+        $query =$db->prepare("UPDATE `articles` SET `stock`=? WHERE id=?");
+        $query->execute([
+            $newStock,$article['id']
+        ]);
+        
+    }
+}
+// AFFICHER LA COMMANDE
+function recupCommande(){
+
+    $db = getConnexion();
+    $commandes= $db->prepare("SELECT * FROM commandes WHERE id_client=?");
+    $commandes->execute([intval($_SESSION["id"])]);
+    return $commandes->fetchAll();
+}
+
+function showCommandes()
+{
+    echo '
+    <div class="container">
+    <div class="row mt-5 mb-5 text-black mx-auto my-auto p-4">
+    <div class="col-3 text-center ">
+    <h5 class="">Numéro</h5>
+    </div>
+    <div class="col-3 text-center ">
+    <h5 class="">Date</h5>
+    </div>
+    <div class="col-3 text-center ">
+    <h5 class="">Montant</h5>
+    </div>
+    <div class="col-3 text-center ">
+    <h5 class="">Détail</h5>
+    </div>
+    <div classe="trait" style="border-bottom: solid 1px; margin-bottom: 3em;"</div>
+    </div>';
+
+   //$commandes=recupCommande;
+    foreach (recupCommande() as $commande) {
+        echo '
+    <div class="container">
+    <div class="row text-black text-center shadow rounded-2 p-4 mb-3">
+    
+    <div class="col-3 text-center my-auto">
+    <h3 class="">' . $commande['numero'] . '</h3>
+    </div>
+    
+    <div class="col-3 text-center my-auto">
+    <h5 class="">' . $commande['date_commande'] . '</h5>
+    </div>
+    
+    <div class="col-3 text-center my-auto">
+    <h5 class="">' . $commande['prix'] . '€' . '</h5>
+    </div>
+    <div class="col-3 text-center my-auto">
+    <form action="./details_commande.php" method="post">
+    <input type="hidden" name="id" value=' . intval($commande['id']) . '>
+    <input type="hidden" name="numero" value=' . $commande['numero'] . '>
+    <input type="hidden" name="date" value=' . $commande['date_commande'] . '>
+    <input type="hidden" name="prix" value=' . $commande['prix'] . '>
+    <button type="submit" class=" btn btn-primary">Détails</button>
+    </form> 
+    </div>
+    </div>
+    </div>';
+    }
+}
+
+// FONCTION DETAILS DE LA COMMANDE
+
+function getCommandeDetails($id){
+    
+    $db = getConnexion();
+    $details_commande = $db->prepare("SELECT * FROM commande_articles INNER JOIN articles ON articles.id = commande_articles.id_article WHERE id_commande=?");
+    $details_commande->execute([$id]);
+    return $details_commande->fetchAll();
+}
+
+function showCommandeDetails($id)
+{
+    echo '<h3 class="text-center">Détail commande : ' . $_POST["numero"] . '</h3>';
+    echo '<h5 class="text-center">Date : ' . $_POST["date"] . '</h5>';
+    echo '<h5 class="text-center">Montant total : ' . number_format($_POST["prix"], 2, " , ", " ") . '€' . '</h5>';
+
+    echo '
+    <div class="container">
+    <div class="row mt-5 mb-5 text-black mx-auto my-auto p-4">
+    <div class="col-3 text-center ">
+    <h5 class="">Article</h5>
+    </div>
+    <div class="col-3 text-center ">
+    <h5 class="">Prix</h5>
+    </div>
+    <div class="col-3 text-center ">
+    <h5 class="">Quantité</h5>
+    </div>
+    <div class="col-3 text-center ">
+    <h5 class="">Montant</h5>
+    </div>
+    <div classe="trait" style="border-bottom: solid 1px; margin-bottom: 3em;"</div>
+    </div>';
+
+    // On boucle sur les articles de la commande pour les afficher
+    $total=0;
+    foreach (getCommandeDetails($id) as $article) {
+        echo '
+    <div class="container">
+    <div class="row text-black text-center shadow rounded-2 p-4 mb-3">
+    
+    <div class="col-3 text-center my-auto">
+    <h5 class="">' . $article['nom'] . '</h5>
+    </div>
+    
+    <div class="col-3 text-center my-auto">
+    <h5 class="">' . $article['prix'] . '€' .  '</h5>
+    </div>
+    
+    <div class="col-3 text-center my-auto">
+    <h5 class="">' . $article['quantite'] . '</h5>
+    </div>
+    <div class="col-3 text-center my-auto">
+    <h5 class="">' . $article['prix'] * $article['quantite'] . '€' . '</h5>
+    </div>
+    </div>
+    </div>';
+    $total += $article['prix'] * $article['quantite'];
+    
+    }; 
+
+    //calucl frais de port
+    echo $_POST["prix"]-$total;
+    
+    
+}
+ 
+

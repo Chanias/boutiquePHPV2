@@ -18,13 +18,21 @@ include ('functions.php');
 if (isset($_POST['quantite'])){
   modifQuantite($_POST['quantite'], $_POST["id_article"]);
   }
-  
   if (isset($_POST['vider_panier'])){
       viderPanier($_POST['vider_panier']);
       }
+  if (isset($_POST["modif_infos"])) {
+    modifInfos();
+}
+
+if (isset($_POST["modif_adresse"])) {
+    modifAdresse();
+}
+  
+  
    ?>
 
-<div class="row justify-content-center text-dark font-weight-bold bg-light p-4">
+<div class="row justify-content-center text-dark font-weight-bold bg-dark p-4">
 <?php
    afficherPanier("validation.php"); 
 ?>
@@ -38,7 +46,19 @@ if (isset($_POST['quantite'])){
                 <?php
                     afficherFraisDePort();
                 ?>
-    </div>  
+    </div> 
+   
+    <!-- AFFICHER ICI LA FUNCTION MODIFICATION INFORMATION et MODIF ADRESSE-->
+<?php
+echo '<h3 class="text-center">Adresse de livraison</h3>';
+showModifInfos("validation.php");
+showModifAdresse("validation.php");
+?>
+
+<?php
+echo '<h3 class="text-center">Adresse de facturation</h3>';
+showModifAdresse("validation.php");
+?>
         <div class="row justify-content-center text-dark font-weight-bold bg-light p-4">
                 <?php
                     afficherTotalApresFdp();
@@ -54,7 +74,7 @@ if (isset($_POST['quantite'])){
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" style="color: green;" id="exampleModalLabel">Votre commande à été validée</h5>
+                <h5 class="modal-title" style="color: green" id="exampleModalLabel">Votre commande à été validée</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body text-center">

@@ -8,7 +8,13 @@ include ('functions.php');
 <body>
  
 
-    <main>
+<main>
+     <div class="container-fluid pb-3">
+            <div class="row text-center">
+                <div class="image" id="image_et_titre">
+                <h1>Les PC GAMERS</h1>
+            </div>
+        </div> 
         <?php
         //affichage d'un article avec détails
        // affichage de l'article dans la page détail

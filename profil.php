@@ -23,7 +23,7 @@ session_start();
 
         <div class="row text-center ml-2 mr-2 mt-5">
         <div class="col-md-3">
-        <i class="fa-solid fa-user"></i>
+        <i class="fa-solid fa-user mb-2 fa-3x"></i>
                 <form action="modifInfos.php">
                     <button type="submit" class="btn btn-primary text-center mx-auto mt-2">Modifier mes informations</button>
                 </form>
@@ -31,21 +31,21 @@ session_start();
 
 
             <div class="col-md-3">
-            <i class="fa-solid fa-key"></i>
+            <i class="fa-solid fa-key mb-2 fa-3x"></i>
                 <form action="modifMdp.php">
                     <button type="submit" class="btn btn-primary text-center mx-auto mt-2">Modifier mon mot de passe</button>
                 </form>
             </div>
 
             <div class="col-md-3">
-            <i class="fa-solid fa-location-dot"></i>
+            <i class="fa-solid fa-location-dot mb-2 fa-3x"></i>
                 <form action="modifAdresse.php">
                     <button type="submit" class="btn btn-primary text-center mx-auto mt-2">Modifier mon adresse</button>
                 </form>
             </div>
             <div class="col-md-3">
-            <i class="fa-solid fa-ticket"></i>
-                <form action="voirCommandes.php">
+            <i class="fa-solid fa-ticket mb-2 fa-3x"></i>
+                <form action="commandes.php">
                     <button type="submit" class="btn btn-primary text-center mx-auto mt-2">Voir mes commandes</button>
                 </form>
             </div>
